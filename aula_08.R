@@ -253,6 +253,120 @@ map(lista_vetores, function(z) z * 3)
 map(lista_vetores, ~ .x * 3)
 
 
+lista_vetores <- list(
+  v1 = c(-3, -2, -1),
+  v2 = c(0, 2),
+  v3 = c(1, 3, 5),
+  v4 = c(0, -9, 3.41, 9, 50)
+)
+
+lista_vetores
+
+length(lista_vetores)
+
+map(lista_vetores, length)
+class(map(lista_vetores, length))
+
+
+map_dbl(lista_vetores, length)
+class(map_dbl(lista_vetores, length))
+
+
+map_dbl(lista_vetores, sum)
+
+
+map(lista_vetores, function(x) mean(x) > 1)
+map_lgl(lista_vetores, function(x) mean(x) > 1)
+
+
+### projeto
+
+
+df <- read_csv("dados/kaggle-cap11/DAYTON_hourly.csv")
+df
+
+nome_regiao <- str_sub(colnames(df)[2], 1, -4)
+
+df %>% 
+  # SINTAXE de rename:
+  # rename(DATAFRAME, NOVO NOME DA COL = ANTIGO NOME DA COL)
+  # rename(DATAFRAME, NOVO NOME DA COL = POSICAO DA COL)
+  rename(consumo_mw = 2) %>% 
+  mutate(
+    mes = lubridate::month(Datetime),
+    regiao = nome_regiao
+  ) %>% 
+  group_by(mes, regiao) %>% 
+  summarise(consumo_medio = mean(consumo_mw))
+
+
+calcular_consumo_medio <- function(arquivo){
+  
+  df <- read_csv(arquivo)
+
+  nome_regiao <- str_sub(colnames(df)[2], 1, -4)
+  
+  df %>% 
+    rename(consumo_mw = 2) %>% 
+    mutate(
+      mes = lubridate::month(Datetime),
+      regiao = nome_regiao
+    ) %>% 
+    group_by(mes, regiao) %>% 
+    summarise(consumo_medio = mean(consumo_mw))
+  
+}
+
+calcular_consumo_medio("dados/kaggle-cap11/AEP_hourly.csv")
+calcular_consumo_medio("dados/kaggle-cap11/DUQ_hourly.csv")
+
+
+read_csv("dados/kaggle-cap11/pjm_hourly_est.csv")
+
+
+# dir()
+arquivos_projeto <- list.files("dados/kaggle-cap11/", 
+                               full.names = TRUE,
+                               pattern = "hourly\\.csv$")
+arquivos_projeto
+
+
+arquivos_projeto[3] %>% calcular_consumo_medio()
+
+
+str_detect("arquivo_csv.parquet", "csv$")
+
+
+
+df_consumo <- map(arquivos_projeto, calcular_consumo_medio)
+df_consumo
+class(df_consumo)
+map(df_consumo, class)
+
+bind_rows(df_consumo)
+
+
+df_consumo <- map_df(arquivos_projeto, calcular_consumo_medio)
+df_consumo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
