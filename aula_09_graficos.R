@@ -250,9 +250,10 @@ df_st_long <- df_st %>%
   )
 
 df_st_long %>%
-  filter(date >= today() - dyears(10)) %>% 
+  filter(date >= today() - dyears(5)) %>% 
   ggplot(aes(x = date, y = taxa, color = indicador)) +
-  geom_line()
+  geom_line() +
+  geom_point(aes(shape = indicador))
 
 ### histogramas
 df_2015$life_expec %>% summary()
@@ -378,6 +379,210 @@ df_feliz_completo %>%
   geom_line(aes(group = country)) +
   geom_point(aes(color = year)) 
   
+### alterando as escalas dos graficos
+df_2015 %>% 
+  ggplot(aes(x = exp(log_gdp_per_capita),
+             y = life_expec,
+             color = life_ladder)) +
+  geom_point()
+
+df_2015 %>% 
+  ggplot(aes(x = log(exp(log_gdp_per_capita)))) +
+  geom_histogram()
+
+
+### SINTAXE DAS FUNÇÕES DE ESCALA:
+# scale_AESTHETIC_TIPO DO AESTHETIC
+scale_
+
+library(scales)
+
+df_2015 %>% 
+  #filter(continent == "Europe") %>% 
+  ggplot(aes(x = exp(log_gdp_per_capita),
+             y = life_expec,
+             color = life_ladder)) +
+  geom_point() +
+  scale_y_continuous(name = "Expectativa de vida",
+                     #breaks = c(45, 50, 55, 60, 65, 70, 75))
+                     breaks = scales::breaks_width(5),
+                     minor_breaks = NULL) +
+  scale_x_continuous(breaks = scales::breaks_width(10000))
+                     
+
+
+df_2015 %>% 
+  #filter(continent == "Europe") %>% 
+  ggplot(aes(x = exp(log_gdp_per_capita),
+             y = life_expec,
+             color = life_ladder)) +
+  geom_point() +
+  scale_y_continuous(name = "Expectativa de vida",
+                     #breaks = c(45, 50, 55, 60, 65, 70, 75))
+                     breaks = scales::breaks_width(5),
+                     minor_breaks = NULL) +
+  scale_x_log10()
+
+
+
+
+
+df_2015 %>% 
+  #filter(continent == "Europe") %>% 
+  ggplot(aes(x = log_gdp_per_capita,
+             y = life_expec,
+             color = life_ladder)) +
+  geom_point() +
+  scale_color_distiller(
+    palette = "YlGn",
+    direction = 1
+  )
+
+
+?scale_color_distiller
+
+# escala de cores para variavel categorica
+df_2015 %>% 
+  #filter(continent == "Europe") %>% 
+  ggplot(aes(x = log_gdp_per_capita,
+             y = life_expec,
+             color = continent)) +
+  geom_point() +
+  scale_color_brewer(
+    palette = "Dark2"
+  )
+
+# alterando escala de eixo de datas
+
+df_st_long %>%
+  filter(date >= today() - dyears(10)) %>% 
+  ggplot(aes(x = date, y = taxa, color = indicador)) +
+  geom_line() +
+  geom_point(aes(shape = indicador)) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  )
+
+df_st_long %>%
+  filter(date >= today() - dyears(2)) %>% 
+  ggplot(aes(x = date, y = taxa, color = indicador)) +
+  geom_line() +
+  geom_point(aes(shape = indicador)) +
+  scale_x_date(
+    date_breaks = "2 months",
+    date_labels = "%Y-%m",
+    minor_breaks = NULL
+  )
+
+
+
+#### facets
+
+df_2015 %>% 
+  filter(!is.na(continent)) %>% 
+  #filter(continent == "Europe") %>% 
+  ggplot(aes(x = log_gdp_per_capita,
+             y = life_expec)) +
+  geom_point() +
+  facet_wrap(vars(continent), scales = "fixed", nrow = 1)
+
+df_feliz_completo %>% 
+  filter(year %in% c(2016, 2017)) %>% 
+  filter(!is.na(continent)) %>% 
+  #filter(continent == "Europe") %>% 
+  ggplot(aes(x = log_gdp_per_capita,
+             y = life_expec)) +
+  geom_point() +
+  facet_grid(rows = vars(year), cols = vars(continent))
+
+# mudando o tema
+
+df_2015 %>% 
+  filter(!is.na(continent)) %>% 
+  #filter(continent == "Europe") %>% 
+  ggplot(aes(x = log_gdp_per_capita,
+             y = life_expec)) +
+  geom_point() +
+  facet_wrap(vars(continent), scales = "fixed", nrow = 1) +
+  theme_bw()
+
+
+
+df_st_long %>%
+  filter(date >= today() - dyears(10)) %>% 
+  ggplot(aes(x = date, y = taxa, color = indicador)) +
+  geom_line() +
+  geom_point(aes(shape = indicador)) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  theme_bw()
+
+library(ggthemes)
+
+
+df_st_long %>%
+  filter(date >= today() - dyears(10)) %>% 
+  ggplot(aes(x = date, y = taxa, color = indicador)) +
+  geom_line() +
+  geom_point(aes(shape = indicador)) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  theme_bw()
+
+?labs
+
+
+
+df_st_long %>%
+  filter(date >= today() - dyears(10)) %>% 
+  ggplot(aes(x = date, y = taxa, color = indicador)) +
+  geom_line() +
+  geom_point(aes(shape = indicador)) +
+  scale_x_date(
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  theme_bw() +
+  labs(y = "Taxa",
+       x = NULL,
+       title = "Indicadores macroeconômicos no Brasil",
+       subtitle = "Desde 2021 a inflação tem aumentado bastante",
+       color = NULL,
+       shape = NULL,
+       caption = "Tema usado: bw")
+
+
+df_2015 %>% 
+  ggplot(aes(x = log_gdp_per_capita,
+             y = life_expec,
+             color = continent,
+             text = country)) +
+  geom_point()
+
+library(plotly)
+ggplotly(tooltip = "text")
+
+
+
+df_2015 %>% 
+  ggplot(aes(x = log_gdp_per_capita,
+             y = life_expec,
+             color = continent,
+             text = str_c(
+               "País: ", country, "\n", 
+               "População :", population
+             )
+             )) +
+  geom_point()
+
+ggplotly(tooltip = "text")
+
+
 
 
 
