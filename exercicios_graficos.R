@@ -7,6 +7,8 @@ herois <- read_csv("dados/herois_completo.csv") %>%
 herois %>% 
   ggplot(aes(x = height)) +
   geom_histogram()
+ggsave("meu_histograma2.png")
+
 
 herois %>% 
   ggplot(aes(x = weight)) +

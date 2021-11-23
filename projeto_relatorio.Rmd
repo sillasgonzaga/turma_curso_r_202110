@@ -1,0 +1,54 @@
+---
+title: "Projeto de Relatório"
+author: "Sillas"
+date: "11/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+
+```{r}
+library(tidyverse)
+```
+
+# Importação dos arquivos
+
+Primeiro importamos o arquivo do [Airbnb](https://airbnb.com/):
+
+```{r}
+df <- readr::read_csv("dados/listings.csv.gz")
+```
+
+# Análise dos dados
+
+A tabela abaixo mostra os bairros com mais anúncios no AIRBNB:
+
+```{r}
+df %>% 
+  count(neighbourhood_cleansed, sort = TRUE) %>% 
+  head(10) %>% 
+  knitr::kable()
+```
+Agora um gráfico do top 10:
+
+```{r}
+df %>% 
+  count(neighbourhood_cleansed, sort = TRUE) %>% 
+  head(10) %>% 
+  ggplot(aes(x = n, y = neighbourhood_cleansed)) +
+  geom_col()
+```
+
+```{r}
+plotly::ggplotly()
+```
+
+
+
+
+
+
+
